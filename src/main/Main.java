@@ -1,14 +1,11 @@
 package main;
 
 
-
 import ship.AbstractShip;
 import ship.Creator;
 import thread.DesignerShipThread;
-import thread.LoaderThread;
-
+import thread.ExecuteShipThread;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -17,21 +14,18 @@ import java.util.concurrent.Executors;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ExecutorService shipExec = Executors.newFixedThreadPool(Creator.CONNECTION_COUNT);
         ExecutorService desigExec = Executors.newFixedThreadPool(Creator.CONNECTION_COUNT);
-        BlockingQueue<AbstractShip> ships = new ArrayBlockingQueue<AbstractShip>(6);
-        DesignerShipThread designerShipThread = new DesignerShipThread(ships);
-        LoaderThread loaderThread = new LoaderThread(ships);
-      //  LoaderThread loaderThread1 = new LoaderThread(ships);
-        desigExec.execute( designerShipThread);
-        shipExec.execute( loaderThread);
-        shipExec.shutdown();
+        ArrayBlockingQueue<AbstractShip> abstractShips = new ArrayBlockingQueue<AbstractShip>(6);
+        desigExec.execute(new DesignerShipThread(abstractShips));
+        Thread.sleep(100);
+        shipExec.execute(new ExecuteShipThread(abstractShips));
+
         desigExec.shutdown();
+        shipExec.shutdown();
 
-      /*  new Thread(designerShipThread).start();
-        new Thread(loaderThread).start();
-        new Thread(loaderThread1).start();*/
+
     }
-
 }
+

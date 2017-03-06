@@ -1,5 +1,6 @@
 package thread;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import ship.AbstractShip;
 import ship.Creator;
 import ship.ShipCreator;
@@ -12,16 +13,16 @@ import java.util.concurrent.BlockingQueue;
  */
 public class DesignerShipThread implements Runnable {
     private BlockingQueue<AbstractShip> ships;
-        private volatile int i ;
+
     public DesignerShipThread(BlockingQueue<AbstractShip> ships) {
         this.ships = ships;
-
     }
 
     @Override
     public void run() {
+        System.out.println("Проектирование караблей...");
         try {
-            for ( i = 0; i < 100; i++) {
+            for (int i = 1; i <= 20; i++) {
                 AbstractShip ship = new ShipCreator(Creator.TYPE_SHIP[new Random().nextInt(3)], Creator.TYPE_CAPACITY[new Random().nextInt(3)]);
                 ship.setId(i);
                 Thread.sleep(10);
@@ -31,7 +32,7 @@ public class DesignerShipThread implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        AbstractShip ship = new ShipCreator("null" ,"null");
+        AbstractShip ship = new ShipCreator("null", "null");
         try {
             ships.put(ship);
         } catch (InterruptedException e) {
